@@ -184,7 +184,9 @@ def setup_nonequilibrium_simulation(parameters: dict,
     return simulation, logger
 
 
-def setup_table_writer(simulation, logger, output_filename_gsd, trigger=1):
+def setup_table_writer(simulation: hoomd.Simulation,
+                       logger: hoomd.logging.Logger,
+                       output_filename: str):
 
     # Instantiate a table logger for output of scalar and string quantities
     table_logger = hoomd.logging.Logger(categories=['scalar', 'string'])
