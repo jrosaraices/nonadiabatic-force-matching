@@ -31,7 +31,7 @@ parser = argparse.ArgumentParser(
 
 parser.add_argument('-gsd_dirname', type=str, required=True,
                     help='directory containing training data (".gsd")', metavar=' ')
-parser.add_argument('-gsd_basename_glob', type=str, default='noising_*.gsd',
+parser.add_argument('-gsd_basename_glob', type=str, default='forward_*.gsd',
                     help='training data basename glob', metavar=' ')
 parser.add_argument('-output_basename', type=str, default='data.npz',
                     help='output data basename (".npz")', metavar= ' ')

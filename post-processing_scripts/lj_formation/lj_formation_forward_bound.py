@@ -14,8 +14,8 @@ from scipy.integrate import cumulative_trapezoid
 
 parser = ArgumentParser(
     prog=Path(__file__).name, usage='%(prog)s [options]',
-    description='''Process nonequilibrium trajectory data in hoomd.write.Table format
-                   to calculate the thermodynamic work''')
+    description='''Estimate the forward free-energy bound from forward trajectory
+                   data in hoomd.write.Table format''')
 
 parser.add_argument('-data_dirname', type=str, required=True,
     help='path to parent directory of mixing energy files', metavar=' ')

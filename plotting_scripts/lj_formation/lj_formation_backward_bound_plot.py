@@ -48,10 +48,10 @@ def get_noneq_label(filepath):
 
 parser = argparse.ArgumentParser(
     prog=pathlib.Path(__file__).name, usage='%(prog)s [options]',
-    description='''Plot denoising free-energy estimates''')
+    description='''Plot backward free-energy estimates''')
 
 parser.add_argument('-data_dir', type=str, required=True, nargs='+',
-    help='paths to files containing post-processed denoising bound data')
+    help='paths to files containing post-processed backward bound data')
 parser.add_argument('-reversed', action='store_true',
     help='assume that estimates were generated for the B → A transition')
 parser.add_argument('-rescaling_factor', type=float, default=1,

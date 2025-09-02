@@ -15,8 +15,8 @@ PROJECT_DIR = Path().resolve()
 
 parser = ArgumentParser(
     prog=Path(__file__).name, usage='%(prog)s [options]',
-    description='''Generate noising trajectories for the LJ system
-                   to estimate an upper bound on the free-energy difference''')
+    description='''Generate trajectories for the LJ system
+                   to estimate work-based bounds on the free-energy difference''')
 
 # system parameters
 parser.add_argument('-σ', type=float, default=1.0,

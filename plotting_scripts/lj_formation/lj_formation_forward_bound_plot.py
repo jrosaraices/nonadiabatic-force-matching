@@ -22,9 +22,9 @@ mpl.rc('text.latex', preamble=(
 ))
 
 # set default fontsize for legends, axis labels, and axis ticklabels
-mpl.rcParams['legend.fontsize'] = 10
-mpl.rcParams['xtick.labelsize'] = 10
-mpl.rcParams['ytick.labelsize'] = 10
+mpl.rcParams['legend.fontsize'] = 9
+mpl.rcParams['xtick.labelsize'] = 9
+mpl.rcParams['ytick.labelsize'] = 9
 mpl.rcParams['axes.labelsize'] = 12
 
 # set default linestyle and linewidth
@@ -34,7 +34,6 @@ mpl.rcParams['axes.linewidth'] = 1.0
 # set colormap to plot lines with
 cmap = colormaps["magma_r"]
 norm = colors.Normalize(vmin=0, vmax=1)
-
 
 def get_noneq_label(filepath):
     label = r'(?<=τ_)[0-9]+\.[0-9]+(?=\.log$)'
@@ -48,12 +47,14 @@ def get_noneq_label(filepath):
 
 parser = argparse.ArgumentParser(
     prog=pathlib.Path(__file__).name, usage='%(prog)s [options]',
-    description='''Plot denoising free-energy estimates''')
+    description='''Plot forward free-energy estimates''')
 
 parser.add_argument('-data_dir', type=str, required=True, nargs='+',
-    help='paths to files containing post-processed noising bound data')
+    help='paths to files containing post-processed forward bound data')
 parser.add_argument('-reversed', action='store_true',
     help='assume that estimates were generated for the B → A transition')
+parser.add_argument('-rescaling_factor', type=float, default=1,
+    help='rescaling factor applied to ALL free-energy estimates')
 parser.add_argument('-ylim', type=float, default=[None, None],
     help='y-axis limits')
 
@@ -79,10 +80,13 @@ if __name__ == '__main__':
     plt.subplots_adjust(left=0.20, right=0.95, bottom=0.25, top=0.925)
 
     for (label, color, array) in zip(data_labels, data_colors, data_arrays):
-        x, y, yerr = array['t'].to_numpy(), array['ft_avg'].to_numpy(), array['ft_std'].to_numpy()
-        line, = ax.plot(x / x.max(), y - y[-1], color=color,
-                        linewidth=2.0, label=r'$\tau = {:.1f}$'.format(float(label)))
-        fill = ax.fill_between(x / x.max(), y - y[-1] - yerr, y - y[-1] + yerr,
+        x, y, yerr = array['t'].to_numpy(), array['wt_avg'].to_numpy(), array['wt_std'].to_numpy()
+        x /= args.rescaling_factor
+        y /= args.rescaling_factor
+        yerr /= args.rescaling_factor
+        line, = ax.plot(x / x.max(), y, color=color,
+                        linewidth=2.0, label=r'$\tau = {:.2f}$'.format(float(label)))
+        fill = ax.fill_between(x / x.max(), y - yerr, y + yerr,
                                facecolor=line.get_color(), alpha=1.0)
 
     label = r'$\tau \to \infty$'
@@ -90,17 +94,23 @@ if __name__ == '__main__':
     array = data_arrays[-1]
 
     x, y, yerr = array['t'].to_numpy(), array['wt_avg'].to_numpy(), array['wt_std'].to_numpy()
-    line, = ax.plot(x / x.max(), y - y[-1], color=color,
+    x /= args.rescaling_factor
+    y /= args.rescaling_factor
+    yerr /= args.rescaling_factor
+    line, = ax.plot(x / x.max(), y, color=color,
                     linewidth=2.0, label=label)
-    fill = ax.fill_between(x / x.max(), y - y[-1] - yerr, y - y[-1] + yerr,
+    fill = ax.fill_between(x / x.max(), y - yerr, y + yerr,
                            facecolor=line.get_color(), alpha=1.0, zorder=-1)
 
     ax.set_xlim([0.0, 1.0])
-    ax.set_ylim(args.ylim   )
-    ax.yaxis.set_major_locator(ticker.MultipleLocator(5.0))
+    ax.set_ylim(args.ylim)
+    ax.yaxis.set_major_locator(ticker.MultipleLocator(1.0))
 
-    ax.set_xlabel(r'$1 - t / \tau$')
-    ax.set_ylabel(r'$\beta \, \widehat{\Delta F}_t$')
-    ax.legend(loc='best', frameon=False, draggable=True, fancybox='off')
+    ax.set_xlabel(r'$t / \tau$')
+    ax.set_ylabel(r'$\beta \, \langle \mathcal{W}_t \rangle$')
+    ax.legend(
+        frameon=False, fancybox=False, draggable=True, loc='best',
+        columnspacing=0.5, labelspacing=0.5, borderpad=0.0, ncol=2,
+        handlelength=0.4, handleheight=0.5, handletextpad=0.4)
 
     plt.show()
