@@ -107,7 +107,7 @@ if __name__ == '__main__':
     ax.yaxis.set_major_locator(ticker.MultipleLocator(1.0))
 
     ax.set_xlabel(r'$t / \tau$')
-    ax.set_ylabel(r'$\beta \, \langle \mathcal{W}_t \rangle$')
+    ax.set_ylabel(r'$\beta \, \langle \mathcal{W}_t \rangle / N$')
     ax.legend(
         frameon=False, fancybox=False, draggable=True, loc='best',
         columnspacing=0.5, labelspacing=0.5, borderpad=0.0, ncol=2,
