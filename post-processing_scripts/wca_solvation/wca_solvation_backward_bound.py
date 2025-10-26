@@ -21,9 +21,9 @@ parser = ArgumentParser(
                    to estimate the lower bound on the free-energy difference''')
 
 parser.add_argument('-data_dirname', type=str, required=True,
-    help='path to parent directory of mixing energy files', metavar=' ')
+                    help='path to parent directory of mixing energy files', metavar=' ')
 parser.add_argument('-data_baseglob', type=str, default='backward_*.txt',
-    help='glob string for file name patter of mixing energy files (CSV format)', metavar=' ')
+                    help='glob string for file name patter of mixing energy files (CSV format)', metavar=' ')
 parser.add_argument('-solvent_energy_key', required=False,
                     type=str, default='wca_monomer.U_BB.energy', metavar=' ')
 parser.add_argument('-solution_energy_key', required=False,
@@ -83,14 +83,14 @@ if __name__ == '__main__':
     N_trajs, N_epochs = solvation_energies.shape
 
     policy_energies = np.vstack(_policy_energies)
-    policy_square_forces = np.vstack(_policy_square_forces)
-    assert policy_energies.shape == policy_square_forces.shape == solvation_energies.shape
+    policy_squared_forces = np.vstack(_policy_squared_forces)
+    assert policy_energies.shape == policy_squared_forces.shape == solvation_energies.shape
 
     t = np.linspace(0, τ, num=N_epochs, endpoint=True)
     ctrapz = lambda y: cumulative_trapezoid(y, x=t, initial=0)
 
     # --- WORK RATE --- #
-    dwdt = -mixing_energies[:, ::-1] * β / τ
+    dwdt = -solvation_energies[:, ::-1] * β / τ
     dwdt_avg = dwdt.mean(0)
     dwdt_std = np.sqrt(dwdt.var(0) / (N_trajs - 1))
 
@@ -126,7 +126,7 @@ if __name__ == '__main__':
         ct_avg=ct_avg, ct_std=ct_std,
         st_avg=st_avg, st_std=st_std,
         ft_avg=ft_avg, ft_std=ft_std,
-        vt_avg=vt_avg, vt_std=vt_std)
+        vt_avg=vt_avg, vt_std=vt_std))
     dataframe.to_string(
         sys.stdout, index=False, col_space=14, justify='right',
         float_format=lambda x: u'{0:9.6e}'.format(x))
